@@ -25,7 +25,9 @@ main = do
                 (zipWith (\r e -> map str2TableCell (r : map sTime e)) rows entries)
 
     Pandoc meta blocks <- readMarkdown def <$> readFile "README.in"
-    putStr $ writeMarkdown def (Pandoc meta (blocks ++ [table]))
+    putStr $
+        writeMarkdown (def { writerExtensions = githubMarkdownExtensions }) $
+        Pandoc meta (blocks ++ [table])
 
 sTime :: Double -> String
 sTime n | n < 10**(-5) = printf "%.0fns" (n * 1000000000)
