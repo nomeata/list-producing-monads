@@ -139,7 +139,7 @@ variants =
     [{- ("accumAppend", accumAppend)
     ,   ("accumAppendSeq", accumAppendSeq)
     ,-} ("accumReverse", accumReverse)
-    ,   ("recursion", listRecurse)
+    ,    ("recursion", listRecurse)
     ,   ("replicateM", listReplicateM)
     ,   ("accumDList", accumDList)
     ,   ("streams", listStreams)

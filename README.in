@@ -1,0 +1,20 @@
+Constructing a list with a monad
+================================
+
+This contains the code, benchmarks and analysis that belongs to the blog post
+<http://www.joachim-breitner.de/blog/684-constructing-a-list-in-a-monad-revisited>
+which incorporates ideas from
+<http://neilmitchell.blogspot.co.uk/2015/09/making-sequencemapm-for-io-take-o1-stack.html> and 
+<http://twanvl.nl/blog/haskell/unsafe-sequence>.
+
+Graphs
+======
+
+The graph omits some of the less efficient variants, so that details are better visible.
+
+![Benchmark plot](./graphs.svg "Benchmark graph")
+
+Benchmark results
+=================
+
+The table omits those variants with quadratic run time, as I do not want to run them on lists longer than 1000.

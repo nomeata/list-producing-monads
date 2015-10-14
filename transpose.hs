@@ -5,6 +5,7 @@ import Data.List
 import Text.Pandoc.Definition
 import Text.Pandoc
 import Text.Printf
+import Data.Functor
 
 main = do
     input <- BS.getContents
@@ -14,17 +15,17 @@ main = do
             , let (s,'/':n) = span (/= '/') x
             ] :: [(String, String, Double)]
 
-    let (columns, rows, entries) = listToTable rows'
+    let (columns, rows, entries) = listToTable rows' 0
     let trim = take (1 + length columns)
 
-    let doc = Pandoc nullMeta [
-            Table []
+    let table =  Table []
                 (trim $ AlignLeft : repeat AlignRight)
                 (trim $ repeat 0)
                 (map str2TableCell ("Variant" : columns))
                 (zipWith (\r e -> map str2TableCell (r : map sTime e)) rows entries)
-            ]
-    putStr $ writeMarkdown def doc
+
+    Pandoc meta blocks <- readMarkdown def <$> readFile "README.in"
+    putStr $ writeMarkdown def (Pandoc meta (blocks ++ [table]))
 
 sTime :: Double -> String
 sTime n | n < 10**(-5) = printf "%.0fns" (n * 1000000000)
@@ -35,15 +36,16 @@ sTime n | n < 10**(-5) = printf "%.0fns" (n * 1000000000)
 str2TableCell s = [Plain [Str s]]
 
 -- returns column header, row headers, rows
-listToTable :: (Eq a, Eq b) => [(a,b,c)] -> ([b],[a],[[c]])
-listToTable entries
+listToTable :: (Eq a, Eq b) => [(a,b,c)] -> c -> ([b],[a],[[c]])
+listToTable entries def
     = (columns, rows, body)
   where
     columns = nub [ x | (_,x,_) <- entries ]
     rows    = nub [ x | (x,_,_) <- entries ]
     body =
-        [ [ v
+        [ [ case find (\(a,b,_) -> a == r && b == c) entries  of
+             Just (_,_,v) -> v
+             Nothing      -> def
           | c <- columns
-          , let Just (_,_,v) = find (\(a,b,_) -> a == r && b == c) entries
           ]
         | r <- rows ]

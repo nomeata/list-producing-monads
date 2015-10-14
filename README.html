@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+</head>
+<body>
+<h1 id="constructing-a-list-with-a-monad">Constructing a list with a monad</h1>
+<p>This contains the code, benchmarks and analysis that belongs to the blog post <a href="http://www.joachim-breitner.de/blog/684" class="uri">http://www.joachim-breitner.de/blog/684</a> which incorporates ideas from <a href="http://neilmitchell.blogspot.co.uk/2015/09/making-sequencemapm-for-io-take-o1-stack.html" class="uri">http://neilmitchell.blogspot.co.uk/2015/09/making-sequencemapm-for-io-take-o1-stack.html</a> and <a href="http://twanvl.nl/blog/haskell/unsafe-sequence" class="uri">http://twanvl.nl/blog/haskell/unsafe-sequence</a>.</p>
+<h1 id="graphs">Graphs</h1>
+<p>The graph omits some of the less efficient variants, so that details are better visible.</p>
+<div class="figure">
+<img src="./graphs.svg" title="Benchmark graph" alt="Benchmark plot" />
+<p class="caption">Benchmark plot</p>
+</div>
+<h1 id="benchmark-results">Benchmark results</h1>
+<p>The table omits those variants with quadratic run time, as I do not want to run them on lists longer than 1000.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Variant</th>
+<th align="right">10^0</th>
+<th align="right">10^1</th>
+<th align="right">10^2</th>
+<th align="right">10^3</th>
+<th align="right">10^4</th>
+<th align="right">10^5</th>
+<th align="right">10^6</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">accumReverse</td>
+<td align="right">37ns</td>
+<td align="right">153ns</td>
+<td align="right">1134ns</td>
+<td align="right">12µs</td>
+<td align="right">208µs</td>
+<td align="right">8540µs</td>
+<td align="right">97ms</td>
+</tr>
+<tr class="even">
+<td align="left">recursion</td>
+<td align="right">29ns</td>
+<td align="right">139ns</td>
+<td align="right">680ns</td>
+<td align="right">6790ns</td>
+<td align="right">160µs</td>
+<td align="right">6441µs</td>
+<td align="right">76ms</td>
+</tr>
+<tr class="odd">
+<td align="left">replicateM</td>
+<td align="right">26ns</td>
+<td align="right">126ns</td>
+<td align="right">677ns</td>
+<td align="right">6785ns</td>
+<td align="right">168µs</td>
+<td align="right">6314µs</td>
+<td align="right">78ms</td>
+</tr>
+<tr class="even">
+<td align="left">accumDList</td>
+<td align="right">35ns</td>
+<td align="right">165ns</td>
+<td align="right">995ns</td>
+<td align="right">10µs</td>
+<td align="right">190µs</td>
+<td align="right">9706µs</td>
+<td align="right">100ms</td>
+</tr>
+<tr class="odd">
+<td align="left">streams</td>
+<td align="right">27ns</td>
+<td align="right">136ns</td>
+<td align="right">691ns</td>
+<td align="right">6788ns</td>
+<td align="right">173µs</td>
+<td align="right">5771µs</td>
+<td align="right">75ms</td>
+</tr>
+<tr class="even">
+<td align="left">unsafeInterleave</td>
+<td align="right">60ns</td>
+<td align="right">329ns</td>
+<td align="right">2804ns</td>
+<td align="right">28µs</td>
+<td align="right">373µs</td>
+<td align="right">5605µs</td>
+<td align="right">57ms</td>
+</tr>
+<tr class="odd">
+<td align="left">listFix</td>
+<td align="right">51ns</td>
+<td align="right">412ns</td>
+<td align="right">4109ns</td>
+<td align="right">56µs</td>
+<td align="right">2761µs</td>
+<td align="right">42ms</td>
+<td align="right">445ms</td>
+</tr>
+<tr class="even">
+<td align="left">escapeIO</td>
+<td align="right">41ns</td>
+<td align="right">187ns</td>
+<td align="right">1808ns</td>
+<td align="right">16µs</td>
+<td align="right">234µs</td>
+<td align="right">4409µs</td>
+<td align="right">45ms</td>
+</tr>
+<tr class="odd">
+<td align="left">hackIO</td>
+<td align="right">30ns</td>
+<td align="right">152ns</td>
+<td align="right">1199ns</td>
+<td align="right">11µs</td>
+<td align="right">140µs</td>
+<td align="right">3701µs</td>
+<td align="right">42ms</td>
+</tr>
+<tr class="even">
+<td align="left">holeIO</td>
+<td align="right">40ns</td>
+<td align="right">222ns</td>
+<td align="right">1725ns</td>
+<td align="right">17µs</td>
+<td align="right">218µs</td>
+<td align="right">4446µs</td>
+<td align="right">53ms</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>
