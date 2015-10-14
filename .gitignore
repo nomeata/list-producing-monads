@@ -1,0 +1,6 @@
+*.hi
+*.o
+benchmark-results.csv
+benchmark-table.md
+benchmark
+statecheck
